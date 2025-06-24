@@ -156,7 +156,7 @@ export default function CarrierSearchComponent({ userType }: CarrierSearchProps)
             <div>
               <label className="text-sm font-medium">エリア</label>
               <Input
-                placeholder="新宿区、渋谷区..."
+                placeholder="松山市、今治市..."
                 value={searchFilters.area}
                 onChange={(e) => setSearchFilters({ ...searchFilters, area: e.target.value })}
               />

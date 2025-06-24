@@ -1,95 +1,414 @@
 "use client"
 
 import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Calculator, MapPin, Clock, Truck, Package, AlertCircle, TrendingUp } from "lucide-react"
 
-const Pricing = () => {
-  // 料金計算のサンプルデータを愛媛県の距離・地域に合わせて更新
-  const [routes] = useState([
+export default function PricingComponent() {
+  const [pricingData, setPricingData] = useState({
+    pickupAddress: "",
+    deliveryAddress: "",
+    cargoType: "",
+    weight: "",
+    dimensions: "",
+    urgency: "normal",
+    vehicleType: "",
+    additionalServices: [] as string[],
+  })
+
+  const [estimate, setEstimate] = useState<{
+    basePrice: number
+    distance: string
+    estimatedTime: string
+    fuelCost: number
+    additionalCosts: number
+    totalPrice: number
+    breakdown: Array<{ item: string; cost: number }>
+  } | null>(null)
+
+  // 愛媛県内の主要ルートの料金例
+  const [recentQuotes, setRecentQuotes] = useState([
     {
       id: 1,
-      from: "松山市",
-      to: "今治市",
+      route: "松山市 → 今治市",
       distance: "42km",
-      basePrice: 8500,
-      estimatedTime: "55分",
+      price: "¥12,500",
+      cargoType: "みかん",
+      vehicleType: "軽トラック",
+      date: "2024-01-15",
     },
     {
       id: 2,
-      from: "松山市",
-      to: "新居浜市",
-      distance: "65km",
-      basePrice: 12000,
-      estimatedTime: "1時間15分",
+      route: "新居浜市 → 四国中央市",
+      distance: "28km",
+      price: "¥9,800",
+      cargoType: "化学製品",
+      vehicleType: "軽バン",
+      date: "2024-01-14",
     },
     {
       id: 3,
-      from: "松山市",
-      to: "宇和島市",
+      route: "宇和島市 → 松山市",
       distance: "85km",
-      basePrice: 15000,
-      estimatedTime: "1時間30分",
+      price: "¥18,000",
+      cargoType: "水産物",
+      vehicleType: "冷蔵車",
+      date: "2024-01-13",
     },
   ])
 
-  // 地域別料金設定を愛媛県版に更新
-  const areaRates = {
-    松山市内: { base: 3000, perKm: 150 },
-    今治市内: { base: 2800, perKm: 140 },
-    新居浜市内: { base: 2800, perKm: 140 },
-    県内近距離: { base: 5000, perKm: 180 },
-    県内長距離: { base: 8000, perKm: 200 },
+  const cargoTypes = [
+    "書類",
+    "小荷物",
+    "農産物（みかん）",
+    "水産物",
+    "造船部品",
+    "化学製品",
+    "タオル製品",
+    "家具・家電",
+    "その他",
+  ]
+
+  const vehicleTypes = ["軽トラック", "軽バン", "ホロ車", "冷蔵車", "冷凍車", "パワーゲート付き"]
+
+  const additionalServices = ["荷物の梱包", "設置・組み立て", "階段作業", "時間指定配送", "土日祝日配送", "保険付帯"]
+
+  const calculateEstimate = () => {
+    // 簡易的な料金計算（実際のアプリではより複雑な計算を行う）
+    let basePrice = 5000 // 基本料金
+    const distance = "25km" // デモ用
+    const estimatedTime = "35分" // デモ用
+    const fuelCost = 800
+    let additionalCosts = 0
+
+    // 荷物タイプによる料金調整
+    switch (pricingData.cargoType) {
+      case "農産物（みかん）":
+        basePrice += 2000
+        break
+      case "水産物":
+        basePrice += 3000
+        break
+      case "造船部品":
+        basePrice += 4000
+        break
+      case "化学製品":
+        basePrice += 3500
+        break
+      default:
+        break
+    }
+
+    // 車両タイプによる料金調整
+    switch (pricingData.vehicleType) {
+      case "冷蔵車":
+        basePrice += 2000
+        break
+      case "冷凍車":
+        basePrice += 3000
+        break
+      case "パワーゲート付き":
+        basePrice += 1500
+        break
+      default:
+        break
+    }
+
+    // 緊急度による料金調整
+    if (pricingData.urgency === "urgent") {
+      basePrice *= 1.5
+    }
+
+    // 追加サービス料金
+    additionalCosts = pricingData.additionalServices.length * 1000
+
+    const totalPrice = basePrice + fuelCost + additionalCosts
+
+    const breakdown = [
+      { item: "基本配送料", cost: basePrice },
+      { item: "燃料費", cost: fuelCost },
+      { item: "追加サービス", cost: additionalCosts },
+    ]
+
+    setEstimate({
+      basePrice,
+      distance,
+      estimatedTime,
+      fuelCost,
+      additionalCosts,
+      totalPrice,
+      breakdown,
+    })
   }
 
   return (
-    <div>
-      <h2>料金について</h2>
-      {/* Routes Table */}
-      <h3>主要ルート</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>出発地</th>
-            <th>目的地</th>
-            <th>距離</th>
-            <th>基本料金</th>
-            <th>所要時間</th>
-          </tr>
-        </thead>
-        <tbody>
-          {routes.map((route) => (
-            <tr key={route.id}>
-              <td>{route.from}</td>
-              <td>{route.to}</td>
-              <td>{route.distance}</td>
-              <td>{route.basePrice}</td>
-              <td>{route.estimatedTime}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">料金見積・提示</h2>
+        <p className="text-gray-600">愛媛県内の配送料金を自動計算し、適正価格を提示します</p>
+      </div>
 
-      {/* Area Rates Table */}
-      <h3>地域別料金</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>地域</th>
-            <th>基本料金</th>
-            <th>1kmあたりの料金</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(areaRates).map(([area, rates]) => (
-            <tr key={area}>
-              <td>{area}</td>
-              <td>{rates.base}</td>
-              <td>{rates.perKm}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 見積もり入力フォーム */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Calculator className="w-5 h-5 mr-2" />
+              料金見積もり
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="pickup">集荷先住所</Label>
+                <Input
+                  id="pickup"
+                  placeholder="愛媛県松山市一番町4-4-2"
+                  value={pricingData.pickupAddress}
+                  onChange={(e) => setPricingData({ ...pricingData, pickupAddress: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="delivery">配送先住所</Label>
+                <Input
+                  id="delivery"
+                  placeholder="愛媛県今治市常盤町1-5-1"
+                  value={pricingData.deliveryAddress}
+                  onChange={(e) => setPricingData({ ...pricingData, deliveryAddress: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="cargo-type">荷物種類</Label>
+                <Select
+                  value={pricingData.cargoType}
+                  onValueChange={(value) => setPricingData({ ...pricingData, cargoType: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="荷物種類を選択" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {cargoTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="vehicle-type">車両タイプ</Label>
+                <Select
+                  value={pricingData.vehicleType}
+                  onValueChange={(value) => setPricingData({ ...pricingData, vehicleType: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="車両タイプを選択" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vehicleTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="weight">重量（kg）</Label>
+                <Input
+                  id="weight"
+                  type="number"
+                  placeholder="例: 50"
+                  value={pricingData.weight}
+                  onChange={(e) => setPricingData({ ...pricingData, weight: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="urgency">緊急度</Label>
+                <Select
+                  value={pricingData.urgency}
+                  onValueChange={(value) => setPricingData({ ...pricingData, urgency: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="normal">通常</SelectItem>
+                    <SelectItem value="urgent">緊急</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <Label>追加サービス</Label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {additionalServices.map((service) => (
+                  <label key={service} className="flex items-center space-x-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={pricingData.additionalServices.includes(service)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setPricingData({
+                            ...pricingData,
+                            additionalServices: [...pricingData.additionalServices, service],
+                          })
+                        } else {
+                          setPricingData({
+                            ...pricingData,
+                            additionalServices: pricingData.additionalServices.filter((s) => s !== service),
+                          })
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <span>{service}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <Button onClick={calculateEstimate} className="w-full">
+              <Calculator className="w-4 h-4 mr-2" />
+              料金を計算
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* 見積もり結果 */}
+        <div className="space-y-4">
+          {estimate && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <TrendingUp className="w-5 h-5 mr-2" />
+                  見積もり結果
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
+                    <div>
+                      <p className="text-sm text-gray-600">合計料金</p>
+                      <p className="text-2xl font-bold text-green-600">¥{estimate.totalPrice.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right text-sm text-gray-600">
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-1" />
+                        <span>{estimate.distance}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        <span>{estimate.estimatedTime}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-medium">料金内訳</h4>
+                    {estimate.breakdown.map((item, index) => (
+                      <div key={index} className="flex justify-between text-sm">
+                        <span>{item.item}</span>
+                        <span>¥{item.cost.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <Button className="flex-1">見積もりを送信</Button>
+                    <Button variant="outline" className="flex-1">
+                      PDF出力
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* 最近の見積もり履歴 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>最近の見積もり履歴</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {recentQuotes.map((quote) => (
+                  <div key={quote.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                      <p className="font-medium text-sm">{quote.route}</p>
+                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                        <span>{quote.distance}</span>
+                        <span>{quote.cargoType}</span>
+                        <span>{quote.vehicleType}</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-green-600">{quote.price}</p>
+                      <p className="text-xs text-gray-500">{quote.date}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* 料金情報・ガイド */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Truck className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h4 className="font-medium">車両別料金</h4>
+                <p className="text-sm text-gray-600">車両タイプごとの基本料金表</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <Package className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <h4 className="font-medium">荷物別料金</h4>
+                <p className="text-sm text-gray-600">荷物種類による料金差</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <h4 className="font-medium">料金ガイド</h4>
+                <p className="text-sm text-gray-600">適正料金の設定方法</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
-
-export default Pricing

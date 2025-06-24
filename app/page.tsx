@@ -48,36 +48,37 @@ export default function AkabouPlatform() {
     },
   ]
 
+  // recentJobsを愛媛県版に更新
   const recentJobs = [
     {
       id: 1,
-      title: "新宿区→渋谷区 書類配送",
-      distance: "5.2km",
-      price: "¥8,500",
+      title: "松山市→今治市 みかん配送",
+      distance: "42.3km",
+      price: "¥12,500",
       time: "30分前",
       urgent: true,
       pickupTime: "14:30",
-      deliveryTime: "15:15",
+      deliveryTime: "15:45",
     },
     {
       id: 2,
-      title: "品川区→港区 小荷物配送",
-      distance: "3.8km",
-      price: "¥6,800",
+      title: "新居浜市→四国中央市 化学製品配送",
+      distance: "28.7km",
+      price: "¥9,800",
       time: "1時間前",
       urgent: false,
       pickupTime: "16:00",
-      deliveryTime: "16:30",
+      deliveryTime: "17:00",
     },
     {
       id: 3,
-      title: "池袋区→新宿区 機材運搬",
-      distance: "7.1km",
-      price: "¥12,000",
+      title: "宇和島市→松山市 水産物配送",
+      distance: "85.2km",
+      price: "¥18,000",
       time: "2時間前",
       urgent: false,
       pickupTime: "18:00",
-      deliveryTime: "18:45",
+      deliveryTime: "19:45",
     },
   ]
 
@@ -274,7 +275,7 @@ export default function AkabouPlatform() {
                       <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                         <div>
                           <p className="text-sm font-medium">14:30 - 集荷</p>
-                          <p className="text-xs text-gray-600">新宿区西新宿1-1-1</p>
+                          <p className="text-xs text-gray-600">松山市久米窪田町1-1</p>
                         </div>
                         <Badge variant="outline" className="bg-blue-100 text-blue-700">
                           進行中
@@ -283,7 +284,7 @@ export default function AkabouPlatform() {
                       <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div>
                           <p className="text-sm font-medium">16:00 - 集荷予定</p>
-                          <p className="text-xs text-gray-600">品川区港南1-1-1</p>
+                          <p className="text-xs text-gray-600">新居浜市一宮町1-1-1</p>
                         </div>
                         <Badge variant="outline" className="bg-gray-100 text-gray-700">
                           予定
@@ -292,7 +293,7 @@ export default function AkabouPlatform() {
                       <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div>
                           <p className="text-sm font-medium">18:00 - 集荷予定</p>
-                          <p className="text-xs text-gray-600">池袋区東池袋1-1-1</p>
+                          <p className="text-xs text-gray-600">宇和島市弁天町1-1-1</p>
                         </div>
                         <Badge variant="outline" className="bg-gray-100 text-gray-700">
                           予定
