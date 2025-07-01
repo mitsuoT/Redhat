@@ -17,6 +17,7 @@ import {
   Menu,
   TrendingUp,
   Package,
+  FileText,
 } from "lucide-react"
 import JobSearchComponent from "@/components/job-search"
 import PricingComponent from "@/components/pricing"
@@ -25,6 +26,7 @@ import CommunicationComponent from "@/components/communication"
 import CarrierSearchComponent from "@/components/carrier-search"
 import DriverRegistrationComponent from "@/components/driver-registration"
 import VehicleManagement from "@/components/vehicle-management"
+import DeliveryReport from "@/components/delivery-report"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export default function CarrierApp() {
@@ -188,6 +190,17 @@ export default function CarrierApp() {
         <Settings className="w-4 h-4 mr-2 flex-shrink-0" />
         <span className="truncate">事業者情報管理</span>
       </Button>
+      <Button
+        variant={activeTab === "delivery-report" ? "default" : "ghost"}
+        className="w-full justify-start text-sm"
+        onClick={() => {
+          setActiveTab("delivery-report")
+          onItemClick?.()
+        }}
+      >
+        <FileText className="w-4 h-4 mr-2 flex-shrink-0" />
+        <span className="truncate">作業完了報告</span>
+      </Button>
     </div>
   )
 
@@ -205,16 +218,16 @@ export default function CarrierApp() {
             </div>
           </div>
           <div className="flex items-center space-x-1 sm:space-x-2">
-            <Button variant="outline" size="sm" className="hidden sm:flex">
+            <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
               <Bell className="w-4 h-4 mr-1 sm:mr-2" />
               <span className="hidden md:inline">通知</span>
             </Button>
-            <Button variant="outline" size="sm" className="sm:hidden">
+            <Button variant="outline" size="sm" className="sm:hidden bg-transparent">
               <Bell className="w-4 h-4" />
             </Button>
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" className="lg:hidden">
+                <Button variant="outline" size="sm" className="lg:hidden bg-transparent">
                   <Menu className="w-4 h-4" />
                 </Button>
               </SheetTrigger>
@@ -359,6 +372,7 @@ export default function CarrierApp() {
           {activeTab === "communication" && <CommunicationComponent userType="carrier" />}
           {activeTab === "carrier-search" && <CarrierSearchComponent userType="carrier" />}
           {activeTab === "registration" && <DriverRegistrationComponent />}
+          {activeTab === "delivery-report" && <DeliveryReport userType="carrier" />}
         </main>
       </div>
     </div>
